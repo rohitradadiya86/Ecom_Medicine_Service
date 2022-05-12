@@ -1,0 +1,13 @@
+{
+    "userAlreadyExist":"This user already exist",
+    "userNotExist":"This user not exist please sign up first",
+    "succSignUp":"User signUp successfully",
+    "errPassWrong":"User Name or Password wrong",
+    "succSignIn":"User signIn successfully",
+
+    "errAuthentication" :"User not authenticated",
+
+    "errProductNotAvailable" : "This medicine not availbale now",
+    "succCartUpdate": "Your cart updated successfully",
+    "succAddToCartProduct": "Product added successfully in your cart"
+}
