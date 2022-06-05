@@ -7,6 +7,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'id'
+      }
+    },
     medicine_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -21,6 +29,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     subtotal: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    is_checkout: {
+      type: DataTypes.TINYINT,
       allowNull: true
     }
   }, {
@@ -41,6 +53,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "medicine_id" },
+        ]
+      },
+      {
+        name: "user_id",
+        using: "BTREE",
+        fields: [
+          { name: "user_id" },
         ]
       },
     ]

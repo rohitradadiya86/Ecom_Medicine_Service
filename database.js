@@ -31,6 +31,7 @@ let models = [
   require("./models/product_master"),
   require("./models/medicine_details"),
   require("./models/cart_master"),
+  require("./models/shipping_charge_master"),
 ];
 
 // Initialize models

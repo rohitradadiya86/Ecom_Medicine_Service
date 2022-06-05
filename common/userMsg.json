@@ -9,5 +9,8 @@
 
     "errProductNotAvailable" : "This medicine not availbale now",
     "succCartUpdate": "Your cart updated successfully",
-    "succAddToCartProduct": "Product added successfully in your cart"
+    "succAddToCartProduct": "Product added successfully in your cart",
+    "errCartItemNotAvailable":"This cart item not available in cart",
+    "succRemoveCartItem": "Cart item remove successfully",
+    "succUpdateCartItem": "Cart item updated successfully"
 }

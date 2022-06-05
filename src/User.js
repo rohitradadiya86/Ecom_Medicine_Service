@@ -4,9 +4,10 @@ const bcrypt = require("bcrypt");
 const userMsg = require("../common/userMsg.json");
 const Constant = require("../constant/constant");
 const jwt = require("jsonwebtoken");
+const auth = require("../common/Auth");
 const typeDefs = gql`
   type Query {
-    hello: String
+    userDetail: user
   }
 
   type AuthPayload {
@@ -34,8 +35,20 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    hello: async (obj, args, ctx, info) => {
-      return "Hello";
+    userDetail: async (obj, args, ctx, info) => {
+      auth.verifyUser(ctx.user);
+
+      const checkUser = await ctx.db.user.findOne({
+        attributes: ["id"],
+        where: {
+          id: ctx.user.id,
+        },
+      });
+
+      if (!checkUser || checkUser === null)
+        throw new UserInputError(userMsg.userNotExist);
+
+      return ctx.db.user.findByPk(checkUser.id);
     },
   },
 
@@ -93,7 +106,7 @@ const resolvers = {
 
       const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET, {
         algorithm: "HS256",
-        expiresIn: "1d",
+        expiresIn: Constant.expiresIn,
       });
 
       return {
