@@ -4,9 +4,13 @@ const userMsg = require("../common/userMsg.json");
 const typeDefs = gql`
   extend type Query {
     getCategoryProduct(mainId: Int!, subId: Int): [cateProduct]
-    getSelectedProduct(productId: Int!): cateProduct
+    getSelectedProduct(productId: Int!, subId: Int): selectedList
   }
 
+  type selectedList {
+    selectedProduct: cateProduct
+    relatedProduct: [cateProduct]
+  }
   type cateProduct {
     id: Int
     main_cate_id: Int
@@ -57,12 +61,19 @@ const resolvers = {
         mainId && subId
           ? { main_cate_id: mainId, sub_cate_id: subId }
           : { main_cate_id: mainId };
+      ctx.db.product_master.hasMany(ctx.db.medicine_details, {
+        foreignKey: "product_id",
+      });
       return ctx.db.product_master.findAll({
         where: findId,
+        include: {
+          model: ctx.db.medicine_details,
+        },
+        order: [["medicine_details", "price", "ASC"]],
       });
     },
 
-    getSelectedProduct: async (obj, { productId }, ctx, info) => {
+    getSelectedProduct: async (obj, { productId, subId }, ctx, info) => {
       auth.verifyUser(ctx.user);
 
       const checkUser = await ctx.db.user.findOne({
@@ -77,7 +88,7 @@ const resolvers = {
       ctx.db.product_master.hasMany(ctx.db.medicine_details, {
         foreignKey: "product_id",
       });
-      return ctx.db.product_master.findOne({
+      const selectedProduct = ctx.db.product_master.findOne({
         // attributes: ["id","sku"],
         where: {
           id: productId,
@@ -85,7 +96,25 @@ const resolvers = {
         include: {
           model: ctx.db.medicine_details,
         },
+        order: [["medicine_details", "price", "ASC"]],
       });
+
+      const subID = subId ? subId : null;
+      const relatedProduct = await ctx.db.product_master.findAll({
+        where: {
+          sub_cate_id: subID,
+        },
+        include: {
+          model: ctx.db.medicine_details,
+        },
+        order: [["medicine_details", "price", "ASC"]],
+      });
+      const relatedProductList =
+        relatedProduct.length > 0 ? relatedProduct : [];
+      return {
+        selectedProduct: selectedProduct,
+        relatedProduct: relatedProductList,
+      };
     },
   },
 };
